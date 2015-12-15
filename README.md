@@ -1,3 +1,3 @@
 # Telegram's Bot for a Secret Santa game
 
-Made with :heart: with Python 3.
+Made with :heart: using Python 3.

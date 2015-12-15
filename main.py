@@ -73,7 +73,7 @@ class SecretSantaBot(telepot.helper.ChatHandler):
             if answer in clue["solutions"]:
                 self._fails = 0
                 self._set_current_clue(self._current_unsolved_clue_index + 1)
-                self.solve = clue.get("solve", False)
+                self._solved = clue.get("solve", False)
                 return self._build_message(clue["answers"]["correct"])
         self._fails += 1
         if self._fails > random.randint(5, 8):
@@ -122,7 +122,7 @@ Do you hope I'll give you some extra information for free? Not on my watch!
 If you want to give an answer, you should enter /answer command first :)
 """)
                     else:
-                        answer = ("photo", {"caption": "You should enter /answer first!", "file": "files/extra1.gif"})
+                        answer = ("document", {"text": "You should enter /answer first!", "file": "files/extra1.gif"})
         return answer
 
     @asyncio.coroutine
@@ -152,6 +152,12 @@ If you want to give an answer, you should enter /answer command first :)
         elif kind == "video" and isinstance(answer, dict):
             with open(answer["file"], "rb") as media_file:
                 yield from self.sender.sendVideo(media_file, caption=answer.get("caption", ""))
+        elif kind == "document" and isinstance(answer, dict):
+            with open(answer["file"], "rb") as media_file:
+                yield from self.sender.sendDocument(media_file)
+                text = answer.get("text", "")
+                if text:
+                    yield from self.sender.sendMessage(text)
         elif kind == "sticker":
             yield from self.sender.sendSticker(answer)
         elif kind == "audio" and isinstance(answer, dict):

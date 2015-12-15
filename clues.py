@@ -14,7 +14,7 @@ CLUES = {
         },
         "hints": [
             "I'm afraid it's quite easy if you use Google",
-            "May be the riddle appear in some comic... may be...",
+            "May be the riddle appears in some comic... may be...",
             "OK, you can use Google if you are desperate :P",
         ]
     },
@@ -32,7 +32,7 @@ CLUES = {
         ]
     },
     "clue-3": {
-        "question": ("text", "How does a 'snake' says 'hello' to everyone?"),
+        "question": ("text", "How does a 'snake' says 'hello' to all the world?"),
         "solutions": ("print('hello world')", 'print("hello world")', 'print("hello world!")', "print('hello world!')",
                       'print("hi world")', "print('hi world')"),
         "answers": {
@@ -93,6 +93,7 @@ CLUES = {
         },
         "hints": [
             "No more clues this time :P",
-        ]
+        ],
+        "solve": True
     }
 }

@@ -35,6 +35,7 @@ class SecretSantaBot(telepot.helper.ChatHandler):
         self._solved_clues = []
         self._current_command = None
         self._fails = 0
+        self._solved = False
         self._set_current_clue(1)
 
     @staticmethod
@@ -72,9 +73,10 @@ class SecretSantaBot(telepot.helper.ChatHandler):
             if answer in clue["solutions"]:
                 self._fails = 0
                 self._set_current_clue(self._current_unsolved_clue_index + 1)
+                self.solve = clue.get("solve", False)
                 return self._build_message(clue["answers"]["correct"])
         self._fails += 1
-        if self._fails > random.randint(5, 10):
+        if self._fails > random.randint(5, 8):
             return "text", "Wrong! Some extra clue: %s" % random.choice(clue["hints"])
         return kind, wrong
 
@@ -113,11 +115,14 @@ Every time you give me a correct answer, I'll give you a new question/riddle, ea
                 if self._current_command == "/answer":
                     answer = self.check_answer(msg)
                 else:
-                    answer = ("text", """
+                    if random.randint(1, 100) > 25:
+                        answer = ("text", """
 Do you hope I'll give you some extra information for free? Not on my watch!
 
 If you want to give an answer, you should enter /answer command first :)
 """)
+                    else:
+                        answer = ("photo", {"caption": "You should enter /answer first!", "file": "files/extra1.gif"})
         return answer
 
     @asyncio.coroutine

@@ -115,7 +115,7 @@ Every time you give me a correct answer, I'll give you a new question/riddle, ea
                 if self._current_command == "/answer":
                     answer = self.check_answer(msg)
                 else:
-                    if random.randint(1, 100) >= 20:
+                    if random.randint(1, 100) > 20:
                         answer = ("text", """
 Do you hope I'll give you some extra information for free? Not on my watch!
 

@@ -74,7 +74,7 @@ CLUES = {
     "clue-6": {
         "question": ("video", {"caption": "Who am I going to vote on the next spanish elections?",
                                "file": "files/clue6.mp4"}),
-        "solutions": ("alberto", "alberto garzon", "alberto garzón", "garzon","garzón"),
+        "solutions": ("alberto", "alberto garzon", "alberto garzón", "garzon", "garzón"),
         "answers": {
             "correct": ("text", "Great! You have another one! You know a lot of things about me now!"
                                 "Remember, you can use /current to check the new clue ;)"),
@@ -85,7 +85,20 @@ CLUES = {
         ]
     },
     "clue-7": {
-        "question": ("text", "Who the hell am I? ;)"),
+        "question": ("photo", {"caption": "This is where my favorite animated series takes place", "file": "files/clue7.png"}),
+        "solutions": ("ooo", "land of ooo"),
+        "answers": {
+            "correct": ("text", "Great! You have another one! We're almost done! :D "
+                                "Remember, you can use /current to check the new clue ;)"),
+            "wrong": "Ups, that's not the answer you're looking for",
+        },
+        "hints": [
+            "What time is it?",
+            "Yes, I like cartoons, but only the good ones!"
+        ]
+    },
+    "clue-8": {
+        "question": ("text", "And the final question... who the hell am I? ;)"),
         "solutions": ("marcos", "markos", "marcos gabarda", "markos gabarda"),
         "answers": {
             "correct": ("sticker", "BQADBAADJgADGolEAAER8FNsi1NergI"),

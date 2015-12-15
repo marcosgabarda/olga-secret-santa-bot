@@ -115,7 +115,7 @@ Every time you give me a correct answer, I'll give you a new question/riddle, ea
                 if self._current_command == "/answer":
                     answer = self.check_answer(msg)
                 else:
-                    if random.randint(1, 100) > 15:
+                    if random.randint(1, 100) >= 20:
                         answer = ("text", """
 Do you hope I'll give you some extra information for free? Not on my watch!
 
@@ -150,9 +150,11 @@ If you want to give an answer, you should enter /answer command first :)
             with open(answer["file"], "rb") as media_file:
                 yield from self.sender.sendPhoto(media_file, caption=answer.get("caption", ""))
         elif kind == "video" and isinstance(answer, dict):
+            yield from self.sender.sendMessage("Wait for it...")
             with open(answer["file"], "rb") as media_file:
                 yield from self.sender.sendVideo(media_file, caption=answer.get("caption", ""))
         elif kind == "document" and isinstance(answer, dict):
+            yield from self.sender.sendMessage("Wait for it...")
             with open(answer["file"], "rb") as media_file:
                 yield from self.sender.sendDocument(media_file)
                 text = answer.get("text", "")
@@ -161,6 +163,7 @@ If you want to give an answer, you should enter /answer command first :)
         elif kind == "sticker":
             yield from self.sender.sendSticker(answer)
         elif kind == "audio" and isinstance(answer, dict):
+            yield from self.sender.sendMessage("Wait for it...")
             with open(answer["file"], "rb") as media_file:
                 text = answer.get("text", "")
                 if text:

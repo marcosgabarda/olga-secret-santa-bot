@@ -25,6 +25,8 @@ class SecretSantaBot(telepot.helper.ChatHandler):
 
 /answer - give a possible answer to the current clue
 /current - shows the current clue
+/random - give you some random answers :)
+/help - shows help
 """
     log = []
     texts_log = []
@@ -43,6 +45,11 @@ class SecretSantaBot(telepot.helper.ChatHandler):
         if isinstance(answer, tuple):
             return answer
         return "text", answer
+
+    @staticmethod
+    def _get_random_answer():
+        random_files = ["files/random/random%s.gif" % i for i in range(1, 8)]
+        return "document", {"file": random.choice(random_files)}
 
     def _set_current_clue(self, index):
         self._current_unsolved_clue_index = index
@@ -76,7 +83,7 @@ class SecretSantaBot(telepot.helper.ChatHandler):
                 self._solved = clue.get("solve", False)
                 return self._build_message(clue["answers"]["correct"])
         self._fails += 1
-        if self._fails > random.randint(5, 8):
+        if self._fails > random.randint(4, 8):
             return "text", "Wrong! Some extra clue: %s" % random.choice(clue["hints"])
         return kind, wrong
 
@@ -103,6 +110,8 @@ Every time you give me a correct answer, I'll give you a new question/riddle, ea
 
 %s
 """ % self.help_text)
+            elif command == "/random":
+                answer = self._get_random_answer()
             elif command == "/current":
                 answer = self.current_clue_message()
             elif command == "/answer":

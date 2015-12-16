@@ -15,7 +15,7 @@ from telepot.delegate import per_chat_id
 
 from clues import CLUES
 
-logging.basicConfig(filename='messages.log', level=logging.DEBUG)
+logging.basicConfig(filename='messages.log', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 

@@ -221,7 +221,7 @@ if __name__ == "__main__":
     TOKEN = sys.argv[1]
     # Creates the bot and the event loop...
     bot = telepot.async.DelegatorBot(TOKEN, [
-        (per_chat_id(), create_open(SecretSantaBot, timeout=604800)),
+        (per_chat_id(), create_open(SecretSantaBot, timeout=2592000)),
     ])
     loop = asyncio.get_event_loop()
     loop.create_task(bot.messageLoop())

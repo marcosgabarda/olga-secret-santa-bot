@@ -1,1 +1,2 @@
 telepot==4.1
+emoji==0.3.8

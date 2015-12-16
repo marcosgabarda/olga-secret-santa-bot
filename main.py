@@ -3,6 +3,7 @@ Telegram Bot created to deliver secret santa clues and riddles to
 Olga Karavayeva.
 """
 import asyncio
+import datetime
 import json
 import logging
 import random
@@ -51,6 +52,14 @@ class SecretSantaBot(telepot.helper.ChatHandler):
         random_files = ["files/random/random%s.gif" % i for i in range(1, 8)]
         return "document", {"file": random.choice(random_files)}
 
+    @staticmethod
+    def _is_clue_available(clue):
+        available = clue.get("available", True)
+        if isinstance(available, datetime.date):
+            today = datetime.date.today()
+            return today >= available
+        return available
+
     def _set_current_clue(self, index):
         self._current_unsolved_clue_index = index
         self._current_unsolved_clue_key = "clue-%s" % index
@@ -63,7 +72,7 @@ class SecretSantaBot(telepot.helper.ChatHandler):
         try:
             return self._build_message(self._get_current_clue()["question"])
         except KeyError:
-            return "text", "Ups, there's no clue right now! Try again later, sorry!"
+            return "text", "Ups, there's no clue right now! Try again tomorrow, sorry!"
 
     def check_answer(self, msg):
         """Checks the answer given.
@@ -71,6 +80,8 @@ class SecretSantaBot(telepot.helper.ChatHandler):
         """
         self._current_command = None
         clue = self._get_current_clue()
+        if not self._is_clue_available(clue):
+            return "text", "Ups, there's no clue right now! Try again tomorrow, sorry!"
         message = self._build_message(clue["answers"]["wrong"])
         kind = message[0]
         wrong = message[1]
@@ -83,7 +94,7 @@ class SecretSantaBot(telepot.helper.ChatHandler):
                 self._solved = clue.get("solve", False)
                 return self._build_message(clue["answers"]["correct"])
         self._fails += 1
-        if self._fails > random.randint(4, 8):
+        if self._fails > random.randint(4, 8) and clue["hints"]:
             return "text", "Wrong! Some extra clue: %s" % random.choice(clue["hints"])
         return kind, wrong
 
@@ -113,9 +124,17 @@ Every time you give me a correct answer, I'll give you a new question/riddle, ea
             elif command == "/random":
                 answer = self._get_random_answer()
             elif command == "/current":
-                answer = self.current_clue_message()
+                clue = self._get_current_clue()
+                if not self._is_clue_available(clue):
+                    answer = ("text", "Ups, there's no clue right now! Try again tomorrow, sorry!")
+                else:
+                    answer = self.current_clue_message()
             elif command == "/answer":
-                answer = ("text", "So, what's you answer?")
+                clue = self._get_current_clue()
+                if not self._is_clue_available(clue):
+                    answer = ("text", "Ups, there's no clue right now! Try again tomorrow, sorry!")
+                else:
+                    answer = ("text", "So, what's you answer?")
             elif command == "/log":
                 answer = ("text", "\n".join(self.log))
             elif command == "/texts_log":
@@ -124,7 +143,7 @@ Every time you give me a correct answer, I'll give you a new question/riddle, ea
                 if self._current_command == "/answer":
                     answer = self.check_answer(msg)
                 else:
-                    if random.randint(1, 100) > 20:
+                    if random.randint(1, 100) > 15:
                         answer = ("text", """
 Do you hope I'll give you some extra information for free? Not on my watch!
 

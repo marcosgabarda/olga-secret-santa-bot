@@ -15,7 +15,7 @@ from telepot.delegate import per_chat_id
 
 from clues import CLUES
 
-logging.basicConfig(filename='messages.log', level=logging.INFO)
+logging.basicConfig(filename='messages.log', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
@@ -27,6 +27,7 @@ class SecretSantaBot(telepot.helper.ChatHandler):
 /answer - give a possible answer to the current clue
 /current - shows the current clue
 /random - give you some random answers :)
+/record - shows the list of solved clues with their answers
 /help - shows help
 """
     log = []
@@ -91,6 +92,7 @@ class SecretSantaBot(telepot.helper.ChatHandler):
             if answer in clue["solutions"]:
                 self._fails = 0
                 self._set_current_clue(self._current_unsolved_clue_index + 1)
+                self._solved_clues.append((clue, answer))
                 self._solved = clue.get("solve", False)
                 return self._build_message(clue["answers"]["correct"])
         self._fails += 1
@@ -115,6 +117,7 @@ class SecretSantaBot(telepot.helper.ChatHandler):
             if command == '/help':
                 answer = ("text", self.help_text)
             elif command == "/start":
+                self._set_current_clue(1)
                 answer = ("text", """Hi Olga!
 Welcome to you Secret Santa Bot! I'll give you some questions/riddles that will give you some clues about myself. \
 Every time you give me a correct answer, I'll give you a new question/riddle, easy!
@@ -135,10 +138,8 @@ Every time you give me a correct answer, I'll give you a new question/riddle, ea
                     answer = ("text", "Ups, there's no clue right now! Try again tomorrow, sorry!")
                 else:
                     answer = ("text", "So, what's you answer?")
-            elif command == "/log":
-                answer = ("text", "\n".join(self.log))
-            elif command == "/texts_log":
-                answer = ("text", "\n".join(self.texts_log))
+            elif command == "/record":
+                answer = ("record", None)
             elif command[0] != "/":
                 if self._current_command == "/answer":
                     answer = self.check_answer(msg)
@@ -167,11 +168,7 @@ If you want to give an answer, you should enter /answer command first :)
         return True
 
     @asyncio.coroutine
-    def on_message(self, msg):
-        logger.info(json.dumps(msg))
-        full_answer = self.analyze_message(msg)
-        kind = full_answer[0]
-        answer = full_answer[1]
+    def send_answer(self, kind, answer):
         if kind == "text":
             yield from self.sender.sendMessage(answer)
         elif kind == "photo" and isinstance(answer, dict):
@@ -197,6 +194,21 @@ If you want to give an answer, you should enter /answer command first :)
                 if text:
                     yield from self.sender.sendMessage(text)
                 yield from self.sender.sendAudio(media_file, title=answer.get("text", ""))
+
+    @asyncio.coroutine
+    def on_message(self, msg):
+        logger.info(json.dumps(msg))
+        full_answer = self.analyze_message(msg)
+        kind = full_answer[0]
+        answer = full_answer[1]
+        if kind == "record":
+            for record in self._solved_clues:
+                clue = record[0]
+                solution = record[1]
+                yield from self.send_answer(*self._build_message(clue["question"]))
+                yield from self.sender.sendMessage("Your answer: %s" % solution)
+        else:
+            yield from self.send_answer(kind, answer)
 
     @asyncio.coroutine
     def on_close(self, exception):

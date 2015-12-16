@@ -47,7 +47,7 @@ CLUES = {
         ]
     },
     "clue-4": {
-        "question": ("audio", {"text": "What am I doing?", "file": "files/clue4.wav"}),
+        "question": ("audio", {"text": "What am I doing while this music sounds in my mind?", "file": "files/clue4.wav"}),
         "solutions": ("boxing", "rocky", "rocky balboa"),
         "answers": {
             "correct": ("text", "Great! You have it! "

@@ -11,7 +11,7 @@ CLUES = {
         "question": ("text", "Let's start with a standard riddle: 'I have billions of eyes, yet I live in darkness. "
                              "I have millions of ears, yet only four lobes. I have no muscle, "
                              "yet I rule two hemispheres. What am I?'\nTry it without using Google ;)"),
-        "solutions": ("a human brain", "brain", "human brain", "brains"),
+        "solutions": ("a human brain", "brain", "human brain", "brains", "human brains"),
         "answers": {
             "correct": ("text", "Great! You have the first one! :D. "
                                 "Remember, you can use /current to check the new clue ;)"),
